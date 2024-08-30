@@ -134,7 +134,7 @@ func (l Negotiator) RoundTrip(req *http.Request) (res *http.Response, err error)
 		// send authenticate
 		var authenticateMessage []byte
 
-		if isHash := len(p) == 65 && p[32] == ':'; isHash {
+		if isHash := len(p) == 32 || (len(p) == 65 && p[32] == ':'); isHash {
 			authenticateMessage, err = ProcessChallengeWithHash(challengeMessage, u, p, domainNeeded)
 		} else {
 			authenticateMessage, err = ProcessChallenge(challengeMessage, u, p, domainNeeded)
