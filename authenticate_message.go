@@ -82,7 +82,7 @@ func (m authenicateMessage) MarshalBinary() ([]byte, error) {
 
 // ProcessChallenge crafts an AUTHENTICATE message in response to the CHALLENGE message
 // that was received from the server
-func ProcessChallenge(challengeMessageData []byte, user, password string, domainNeeded bool) ([]byte, error) {
+func ProcessChallenge(challengeMessageData []byte, user, domain, password string, domainNeeded bool) ([]byte, error) {
 	if user == "" && password == "" {
 		return nil, errors.New("Anonymous authentication not supported")
 	}
@@ -99,7 +99,9 @@ func ProcessChallenge(challengeMessageData []byte, user, password string, domain
 		return nil, errors.New("Key exchange requested but not supported (NTLMSSP_NEGOTIATE_KEY_EXCH)")
 	}
 
-	if !domainNeeded {
+	if domainNeeded {
+		cm.TargetName = domain
+	} else {
 		cm.TargetName = ""
 	}
 
@@ -132,7 +134,7 @@ func ProcessChallenge(challengeMessageData []byte, user, password string, domain
 	return am.MarshalBinary()
 }
 
-func ProcessChallengeWithHash(challengeMessageData []byte, user, hash string, domainNeeded bool) ([]byte, error) {
+func ProcessChallengeWithHash(challengeMessageData []byte, user, domain, hash string, domainNeeded bool) ([]byte, error) {
 	if user == "" && hash == "" {
 		return nil, errors.New("Anonymous authentication not supported")
 	}
@@ -149,7 +151,9 @@ func ProcessChallengeWithHash(challengeMessageData []byte, user, hash string, do
 		return nil, errors.New("Key exchange requested but not supported (NTLMSSP_NEGOTIATE_KEY_EXCH)")
 	}
 
-	if !domainNeeded {
+	if domainNeeded {
+		cm.TargetName = domain
+	} else {
 		cm.TargetName = ""
 	}
 
